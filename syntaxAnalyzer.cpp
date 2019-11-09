@@ -33,14 +33,14 @@ int		main()
 	string				currentChar;
 
 
-	string				parserTable[8][10] = { {"-1",  "id",   "=",   "+",   "-",   "*",  "/",   "(",   ")",   "$"},
-											   {"S",    "1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1"},
-											   {"A",    "2",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1"},
-											   {"E",    "3",  "-1",  "-1",  "-1",  "-1",  "-1",  "3",  "-1",  "-1"}, 
-											   {"E'",   "-1",  "-1",  "4",   "5",  "-1",  "-1",  "-1",   "e",   "e"}, 
-											   {"T",    "6",  "-1",  "-1",  "-1",  "-1",  "-1",   "6",  "-1",  "-1"}, 
-											   {"T'",   "2",  "-1",   "e",  "e",  "7",   "8",    "-1",   "e",   "e"}, 
-											   {"F",    "10",  "-1",  "-1",  "-1",  "-1",  "-1",  "9",  "-1",  "-1"} };
+	string				parserTable[8][11] = { {"-1",  "id",   "=",   "+",   "-",   "*",  "/",   "(",   ")",   "$",   ";"},
+											   {"S",    "1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1"},
+											   {"A",    "2",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1"},
+											   {"E",    "3",  "-1",  "-1",  "-1",  "-1",  "-1",  "3",  "-1",  "-1",   "-1"}, 
+											   {"E'",   "-1",  "-1",  "4",   "5",  "-1",  "-1",  "-1",   "e",   "e",  "e"}, 
+											   {"T",    "6",  "-1",  "-1",  "-1",  "-1",  "-1",   "6",  "-1",  "-1",  "-1"}, 
+											   {"T'",   "2",  "-1",   "e",  "e",  "7",   "8",    "-1",   "e",   "e",  "e"}, 
+											   {"F",    "10",  "-1",  "-1",  "-1",  "-1",  "-1",  "9",  "-1",  "-1",  "-1"} };
 
 	inFile.open("input2.txt");
 
@@ -100,6 +100,7 @@ int		main()
 			}
 			else if (parserTable[row][col] == "2")
 			{
+				tableStack.push(";");
 				tableStack.push("E");
 				tableStack.push("=");
 				tableStack.push("id");
@@ -165,7 +166,7 @@ void 	printRule(string ruleNum)
 	}
 	else if (ruleNum == "2")
 	{
-		cout << "A -> id = E" << endl;
+		cout << "A -> id = E;" << endl;
 	}
 	else if (ruleNum == "3")
 	{
@@ -213,7 +214,7 @@ void 	printRule(string ruleNum)
 
 bool	isTerminal(string check)
 {
-	if (check == "id" || check == "=" || check == "+" || check == "-" || check == "*" || check == "/" || check == "(" || check == ")" || check == "$")
+	if (check == "id" || check == "=" || check == "+" || check == "-" || check == "*" || check == "/" || check == "(" || check == ")" || check == "$" || check == ";") 
 	{
 		return true;
 	}
@@ -266,6 +267,8 @@ int		getCol(string check)
 		return 8;
 	else if (check == "$")
 		return 9;
+	else if (check == ";")
+		return 10;
 	else
 		return -1;
 }
