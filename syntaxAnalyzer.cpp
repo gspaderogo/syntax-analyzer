@@ -11,14 +11,6 @@
 #include "syntaxAnalyzer.h"
 using namespace std;
 
-// function prototypes
-int		getRow(string check);
-int		getCol(string check);
-bool	isTerminal(string check);
-void	printRule(string ruleNum);
-
-bool isIdentifier(const string &str);
-int columnNum(char c);
 
 int		main()
 {
@@ -31,129 +23,135 @@ int		main()
 	string				stringCheck;
 	string				currentTop;
 	string				currentChar;
-
+	
 
 	string				parserTable[8][11] = { {"-1",  "id",   "=",   "+",   "-",   "*",  "/",   "(",   ")",   "$",   ";"},
 											   {"S",    "1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1"},
 											   {"A",    "2",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1"},
-											   {"E",    "3",  "-1",  "-1",  "-1",  "-1",  "-1",  "3",  "-1",  "-1",   "-1"}, 
-											   {"E'",   "-1",  "-1",  "4",   "5",  "-1",  "-1",  "-1",   "e",   "e",  "e"}, 
-											   {"T",    "6",  "-1",  "-1",  "-1",  "-1",  "-1",   "6",  "-1",  "-1",  "-1"}, 
-											   {"T'",   "2",  "-1",   "e",  "e",  "7",   "8",    "-1",   "e",   "e",  "e"}, 
+											   {"E",    "3",  "-1",  "-1",  "-1",  "-1",  "-1",  "3",  "-1",  "-1",   "-1"},
+											   {"E'",   "-1",  "-1",  "4",   "5",  "-1",  "-1",  "-1",   "e",   "e",  "e"},
+											   {"T",    "6",  "-1",  "-1",  "-1",  "-1",  "-1",   "6",  "-1",  "-1",  "-1"},
+											   {"T'",   "2",  "-1",   "e",  "e",  "7",   "8",    "-1",   "e",   "e",  "e"},
 											   {"F",    "10",  "-1",  "-1",  "-1",  "-1",  "-1",  "9",  "-1",  "-1",  "-1"} };
 
 	inFile.open("input2.txt");
 
-	if(inFile.fail())
+	if (inFile.fail())
 	{
 		cout << "There was an error opening the file..." << endl;
 		return 0;
 	}
 
-	// push "$" and starting "S" symbol
-	tableStack.push("$");
-	tableStack.push("S");
 
-	// grab the test string 
-	getline(inFile, stringCheck);
-
-	// get rid of whitespace
-	stringCheck.erase(remove(stringCheck.begin(),stringCheck.end(),' '),stringCheck.end());
-	
-	// add "$" to the end of stringCheck 
-	stringCheck.append("$");
-
-
-	while(!tableStack.empty())
+	while (!inFile.eof())
 	{
-		currentTop = tableStack.top();
-		currentChar = stringCheck[iterator];
+		iterator = 0;
 
-		if(isIdentifier(currentChar))
+		// push "$" and starting "S" symbol
+		tableStack.push("$");
+		tableStack.push("S");
+
+		// grab the test string 
+		getline(inFile, stringCheck);
+	
+
+		// get rid of whitespace
+		stringCheck.erase(remove(stringCheck.begin(), stringCheck.end(), ' '), stringCheck.end());
+
+		// add "$" to the end of stringCheck 
+		stringCheck.append("$");
+		cout << stringCheck << endl;
+
+
+		while (!tableStack.empty())
 		{
-			currentChar = "id";
-		}
-		
-		// terminal at top of stack
-		if (isTerminal(currentTop))
-		{
-			if(currentTop == currentChar)
+			currentTop = tableStack.top();
+			currentChar = stringCheck[iterator];
+
+			if (isIdentifier(currentChar))
 			{
-				cout << "Match found with " << currentChar << endl << endl;
+				currentChar = "id";
+			}
+
+			// terminal at top of stack
+			if (isTerminal(currentTop))
+			{
+				if (currentTop == currentChar)
+				{
+					cout << "Match found with " << currentChar << endl << endl;
+					tableStack.pop();
+					++iterator;
+				}
+			}
+
+			// non-terminal, so check which rule to use and push to stack 
+			else
+			{
+				row = getRow(currentTop);
+				col = getCol(currentChar);
+
 				tableStack.pop();
-				++iterator;
+				printRule(parserTable[row][col]);
+
+				if (parserTable[row][col] == "1")
+				{
+					tableStack.push("A");
+				}
+				else if (parserTable[row][col] == "2")
+				{
+					tableStack.push(";");
+					tableStack.push("E");
+					tableStack.push("=");
+					tableStack.push("id");
+				}
+				else if (parserTable[row][col] == "3")
+				{
+					tableStack.push("E'");
+					tableStack.push("T");
+				}
+				else if (parserTable[row][col] == "4")
+				{
+					tableStack.push("E'");
+					tableStack.push("T");
+					tableStack.push("+");
+				}
+				else if (parserTable[row][col] == "5")
+				{
+					tableStack.push("E'");
+					tableStack.push("T");
+					tableStack.push("-");
+				}
+				else if (parserTable[row][col] == "6")
+				{
+					tableStack.push("T'");
+					tableStack.push("F");
+				}
+				else if (parserTable[row][col] == "7")
+				{
+					tableStack.push("T'");
+					tableStack.push("F");
+					tableStack.push("*");
+				}
+				else if (parserTable[row][col] == "8")
+				{
+					tableStack.push("T'");
+					tableStack.push("F");
+					tableStack.push("/");
+				}
+				else if (parserTable[row][col] == "9")
+				{
+					tableStack.push(")");
+					tableStack.push("E");
+					tableStack.push("(");
+				}
+				else if (parserTable[row][col] == "10")
+				{
+					tableStack.push("id");
+				}
 			}
+
 		}
-
-		// non-terminal, so check which rule to use and push to stack 
-		else 
-		{
-			row = getRow(currentTop);
-			col = getCol(currentChar);
-
-			tableStack.pop();
-			printRule(parserTable[row][col]);
-
-			if(parserTable[row][col] == "1")
-			{
-				tableStack.push("A");
-			}
-			else if (parserTable[row][col] == "2")
-			{
-				tableStack.push(";");
-				tableStack.push("E");
-				tableStack.push("=");
-				tableStack.push("id");
-			}
-			else if (parserTable[row][col] == "3")
-			{
-				tableStack.push("E'");
-				tableStack.push("T");
-			}
-			else if (parserTable[row][col] == "4")
-			{
-				tableStack.push("E'");
-				tableStack.push("T");
-				tableStack.push("+");
-			}
-			else if (parserTable[row][col] == "5")
-			{
-				tableStack.push("E'");
-				tableStack.push("T");
-				tableStack.push("-");
-			}
-			else if (parserTable[row][col] == "6")
-			{
-				tableStack.push("T'");
-				tableStack.push("F");
-			}
-			else if (parserTable[row][col] == "7")
-			{
-				tableStack.push("T'");
-				tableStack.push("F");
-				tableStack.push("*");
-			}
-			else if (parserTable[row][col] == "8")
-			{
-				tableStack.push("T'");
-				tableStack.push("F");
-				tableStack.push("/");	
-			}
-			else if (parserTable[row][col] == "9")
-			{
-				tableStack.push(")");
-				tableStack.push("E");
-				tableStack.push("(");			
-			}
-			else if (parserTable[row][col] == "10")
-			{
-				tableStack.push("id");
-			}
-		}
-
 	}
-
-
 	return 0;
 }
 
@@ -207,18 +205,18 @@ void 	printRule(string ruleNum)
 	else
 	{
 		cout << "Error" << endl;
-	}	
+	}
 }
 
 
 
 bool	isTerminal(string check)
 {
-	if (check == "id" || check == "=" || check == "+" || check == "-" || check == "*" || check == "/" || check == "(" || check == ")" || check == "$" || check == ";") 
+	if (check == "id" || check == "=" || check == "+" || check == "-" || check == "*" || check == "/" || check == "(" || check == ")" || check == "$" || check == ";")
 	{
 		return true;
 	}
-	else 
+	else
 	{
 		return false;
 	}
@@ -243,7 +241,7 @@ int		getRow(string check)
 	else if (check == "F")
 		return 7;
 	else
-		return -1; 
+		return -1;
 }
 
 
@@ -275,7 +273,7 @@ int		getCol(string check)
 
 
 //Returns true if identifier
-bool isIdentifier(const string &str)
+bool isIdentifier(const string& str)
 {												//DFSM TABLE
 	const int STATES = 4, INPUTS = 5;			//		l	d	$	.	other
 	int dfsmTable[STATES][INPUTS] =				//0	|	0	0	0	0	0	(dead state)

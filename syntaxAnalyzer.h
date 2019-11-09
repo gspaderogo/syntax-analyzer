@@ -20,5 +20,12 @@
 #include <stack>
 using namespace std;
 
+int		getRow(string check);
+int		getCol(string check);
+bool	isTerminal(string check);
+void	printRule(string ruleNum);
+
+bool isIdentifier(const string& str);
+int columnNum(char c);
 
 #endif
