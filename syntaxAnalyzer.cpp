@@ -66,7 +66,7 @@ int	analyzer(vector<tuple<string, string>> list)
 		{
 			if (currentTop == currentLexeme)
 			{
-				cout << "MATCH FOUND:\t" << currentLexeme << endl << endl;
+				cout << "Token: " << currentToken << "\t\tLexeme: " << currentLexeme << endl << endl;
 				tableStack.pop();
 				++iterator;
 			}
