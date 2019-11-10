@@ -16,6 +16,7 @@
 #include <iomanip>
 #include <tuple>
 #include <string>
+#include <vector>
 using namespace std;
 
 //Returns column number based on type of character

@@ -9,10 +9,11 @@
 */
 
 #include "syntaxAnalyzer.h"
+#include "lexicalAnalyzer.h"
 using namespace std;
 
 
-int		main()
+int	analyzer(vector<tuple<string, string>> list)
 {
 	ifstream			inFile;
 	ofstream			outFile;
@@ -20,9 +21,10 @@ int		main()
 	int					iterator = 0;
 	int					row;
 	int					col;
-	string				stringCheck;
+	tuple<string, string>				stringCheck;
 	string				currentTop;
-	string				currentChar;
+	string				currentToken;
+	string				currentLexeme;
 
 
 	string				parserTable[8][11] = { {"-1",  "id",   "=",   "+",   "-",   "*",  "/",   "(",   ")",   "$",   ";"},
@@ -34,123 +36,108 @@ int		main()
 											   {"T'",   "2",  "-1",   "e",  "e",  "7",   "8",    "-1",   "e",   "e",  "e"},
 											   {"F",    "10",  "-1",  "-1",  "-1",  "-1",  "-1",  "9",  "-1",  "-1",  "-1"} };
 
-	inFile.open("input2.txt");
+	iterator = 0;
 
-	if (inFile.fail())
-	{
-		cout << "There was an error opening the file..." << endl;
-		return 0;
+	// push "$" and starting "S" symbol
+	tableStack.push("$");
+	tableStack.push("S");
+
+	// add "$" to the end of stringCheck 
+	list.at(list.size() - 1) = make_tuple("EOS", "$");
+
+	for (int i = 0; i < list.size(); i++) {
+		cout << get<0>(list.at(i)) << '\t' << get<1>(list.at(i)) << endl;
 	}
 
-
-	while (!inFile.eof())
+	while (!tableStack.empty())
 	{
-		iterator = 0;
+		currentTop = tableStack.top();
+		currentToken = get<0>(list.at(iterator));
+		currentLexeme = get<1>(list.at(iterator));
 
-		// push "$" and starting "S" symbol
-		tableStack.push("$");
-		tableStack.push("S");
-
-		// grab the test string 
-		getline(inFile, stringCheck);
-
-
-		// get rid of whitespace
-		stringCheck.erase(remove(stringCheck.begin(), stringCheck.end(), ' '), stringCheck.end());
-
-		// add "$" to the end of stringCheck 
-		stringCheck.append("$");
-		cout << stringCheck << endl;
-
-
-		while (!tableStack.empty())
+		if (currentToken == "IDENTIFIER")
 		{
-			currentTop = tableStack.top();
-			currentChar = stringCheck[iterator];
-
-			if (isIdentifier(currentChar))
-			{
-				currentChar = "id";
-			}
-
-			// terminal at top of stack
-			if (isTerminal(currentTop))
-			{
-				if (currentTop == currentChar)
-				{
-					cout << "MATCH FOUND:\t" << currentChar << endl << endl;
-					tableStack.pop();
-					++iterator;
-				}
-			}
-
-			// non-terminal, so check which rule to use and push to stack 
-			else
-			{
-				row = getRow(currentTop);
-				col = getCol(currentChar);
-
-				tableStack.pop();
-				printRule(parserTable[row][col]);
-
-				if (parserTable[row][col] == "1")
-				{
-					tableStack.push("A");
-				}
-				else if (parserTable[row][col] == "2")
-				{
-					tableStack.push(";");
-					tableStack.push("E");
-					tableStack.push("=");
-					tableStack.push("id");
-				}
-				else if (parserTable[row][col] == "3")
-				{
-					tableStack.push("E'");
-					tableStack.push("T");
-				}
-				else if (parserTable[row][col] == "4")
-				{
-					tableStack.push("E'");
-					tableStack.push("T");
-					tableStack.push("+");
-				}
-				else if (parserTable[row][col] == "5")
-				{
-					tableStack.push("E'");
-					tableStack.push("T");
-					tableStack.push("-");
-				}
-				else if (parserTable[row][col] == "6")
-				{
-					tableStack.push("T'");
-					tableStack.push("F");
-				}
-				else if (parserTable[row][col] == "7")
-				{
-					tableStack.push("T'");
-					tableStack.push("F");
-					tableStack.push("*");
-				}
-				else if (parserTable[row][col] == "8")
-				{
-					tableStack.push("T'");
-					tableStack.push("F");
-					tableStack.push("/");
-				}
-				else if (parserTable[row][col] == "9")
-				{
-					tableStack.push(")");
-					tableStack.push("E");
-					tableStack.push("(");
-				}
-				else if (parserTable[row][col] == "10")
-				{
-					tableStack.push("id");
-				}
-			}
-
+			currentToken = "id";
+			currentLexeme = "id";
 		}
+
+		// terminal at top of stack
+		if (isTerminal(currentTop))
+		{
+			if (currentTop == currentLexeme)
+			{
+				cout << "MATCH FOUND:\t" << currentLexeme << endl << endl;
+				tableStack.pop();
+				++iterator;
+			}
+		}
+
+		// non-terminal, so check which rule to use and push to stack 
+		else
+		{
+			row = getRow(currentTop);
+			col = getCol(currentLexeme);
+
+			tableStack.pop();
+			printRule(parserTable[row][col]);
+
+			if (parserTable[row][col] == "1")
+			{
+				tableStack.push("A");
+			}
+			else if (parserTable[row][col] == "2")
+			{
+				tableStack.push(";");
+				tableStack.push("E");
+				tableStack.push("=");
+				tableStack.push("id");
+			}
+			else if (parserTable[row][col] == "3")
+			{
+				tableStack.push("E'");
+				tableStack.push("T");
+			}
+			else if (parserTable[row][col] == "4")
+			{
+				tableStack.push("E'");
+				tableStack.push("T");
+				tableStack.push("+");
+			}
+			else if (parserTable[row][col] == "5")
+			{
+				tableStack.push("E'");
+				tableStack.push("T");
+				tableStack.push("-");
+			}
+			else if (parserTable[row][col] == "6")
+			{
+				tableStack.push("T'");
+				tableStack.push("F");
+			}
+			else if (parserTable[row][col] == "7")
+			{
+				tableStack.push("T'");
+				tableStack.push("F");
+				tableStack.push("*");
+			}
+			else if (parserTable[row][col] == "8")
+			{
+				tableStack.push("T'");
+				tableStack.push("F");
+				tableStack.push("/");
+			}
+			else if (parserTable[row][col] == "9")
+			{
+				tableStack.push(")");
+				tableStack.push("E");
+				tableStack.push("(");
+			}
+			else if (parserTable[row][col] == "10")
+			{
+				tableStack.push("id");
+			}
+		}
+
 	}
 	return 0;
 }
@@ -227,10 +214,7 @@ bool isTerminal(string check)
 	{
 		return true;
 	}
-	else
-	{
-		return false;
-	}
+	return false;
 }
 
 
@@ -281,42 +265,3 @@ int	getCol(string check)
 	else
 		return -1;
 }
-
-
-//Returns true if identifier
-bool isIdentifier(const string& str)
-{												//DFSM TABLE
-	const int STATES = 4, INPUTS = 5;			//		l	d	$	.	other
-	int dfsmTable[STATES][INPUTS] =				//0	|	0	0	0	0	0	(dead state)
-	{ { 0, 0, 0, 0, 0 },						//1	|	2	0	0	0	0
-	{ 2, 0, 0, 0, 0 },							//2	|	2	2	3	0	0
-	{ 2, 2, 3, 0, 0 },							//3	|	0	0	0	0	0
-	{ 0, 0, 0, 0, 0 } };						//Final states: 2, 3
-
-	int state = 1;								//Initial state: 1
-	int length = str.length();
-	for (int i = 0; i < length; ++i)			//Traverses through lexeme
-	{
-		int input = columnNum(str[i]);			//Finds column number based on each character in the lexeme
-		state = dfsmTable[state][input];		//Determines new state based on input
-	}
-	if (state == 2 || state == 3)
-		return true;
-
-	return false;
-}
-
-//Helper function for isIdentifier
-int columnNum(char c)
-{
-	if (isalpha(c))			return 0;			//column 0 = letter
-	else if (isdigit(c))	return 1;			//column 1 = digit
-	else if (c == '$')		return 2;			//column 2 = $
-	else if (c == '.')		return 3;			//column 3 = .
-	return 4;									//column 4 = all other characters
-}
-
-
-
-
-

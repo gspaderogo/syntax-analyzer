@@ -18,7 +18,11 @@
 #include <string>
 #include <algorithm>
 #include <stack>
+#include <vector>
 using namespace std;
+
+//Determines if the syntax is correct
+int analyzer(vector<tuple<string, string>>);
 
 //Used in parsing table
 int	getRow(string check);

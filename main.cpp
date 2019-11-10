@@ -6,13 +6,14 @@
 */
 
 #include "LexicalAnalyzer.h"
+#include "syntaxAnalyzer.h"
 
 int main()
 {
 	ifstream inFile;
 	string userInput;
-	ofstream outFile("output.txt");		
-	
+	ofstream outFile("output.txt");
+
 	cout << "------------------------------------------------------------\n"
 		<< "LEXICAL ANALYZER by Johanna Nguyen\n"
 		<< "------------------------------------------------------------\n"
@@ -28,12 +29,18 @@ int main()
 
 	if (inFile.is_open())
 	{
-		outFile << left << setw(40) << "TOKEN" << "LEXEME" << endl;
+		//outFile << left << setw(40) << "TOKEN" << "LEXEME" << endl;
+		vector<tuple<string, string>> list;
 
 		while (!inFile.eof())
 		{
-			lexer(inFile, outFile);
+			//lexer(inFile, outFile);
+
+			tuple<string, string> token = backgroundLex(inFile); // puts data into vector
+			list.push_back(token);
 		}
+
+		analyzer(list);
 
 		cout << "------------------------------------------------------------\n"
 			<< "File has successfully been processed.\n"
@@ -41,11 +48,11 @@ int main()
 	}
 	else
 		cerr << "------------------------------------------------------------\n"
-			<<	"\nError - file could not be opened.\n\n";
+		<< "\nError - file could not be opened.\n\n";
 
 	inFile.close();
 	outFile.close();
-	
+
 	system("Pause");
 	return 0;
 }
