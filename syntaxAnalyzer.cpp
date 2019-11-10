@@ -78,6 +78,13 @@ int	analyzer(vector<tuple<string, string>> list)
 			row = getRow(currentTop);
 			col = getCol(currentLexeme);
 
+			if (row == -1) {
+				cout << "Error: unexpected nonterminal" << endl;
+			}
+			if (row == -1) {
+				cout << "Error: unexpected terminal" << endl;
+			}
+
 			tableStack.pop();
 			printRule(parserTable[row][col]);
 
