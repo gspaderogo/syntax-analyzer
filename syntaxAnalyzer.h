@@ -20,12 +20,22 @@
 #include <stack>
 using namespace std;
 
-int		getRow(string check);
-int		getCol(string check);
-bool	isTerminal(string check);
-void	printRule(string ruleNum);
+//Used in parsing table
+int	getRow(string check);
 
+//Used in parsing table
+int	getCol(string check);
+
+//Determines if string is a terminal
+bool isTerminal(string check);
+
+//Displays which production rule is used
+void printRule(string ruleNum);
+
+//Determines if string is an identifier
 bool isIdentifier(const string& str);
+
+//Helper function for isIdentifier
 int columnNum(char c);
 
 #endif

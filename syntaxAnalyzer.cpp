@@ -23,7 +23,7 @@ int		main()
 	string				stringCheck;
 	string				currentTop;
 	string				currentChar;
-	
+
 
 	string				parserTable[8][11] = { {"-1",  "id",   "=",   "+",   "-",   "*",  "/",   "(",   ")",   "$",   ";"},
 											   {"S",    "1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1"},
@@ -53,7 +53,7 @@ int		main()
 
 		// grab the test string 
 		getline(inFile, stringCheck);
-	
+
 
 		// get rid of whitespace
 		stringCheck.erase(remove(stringCheck.begin(), stringCheck.end(), ' '), stringCheck.end());
@@ -78,7 +78,7 @@ int		main()
 			{
 				if (currentTop == currentChar)
 				{
-					cout << "Match found with " << currentChar << endl << endl;
+					cout << "MATCH FOUND:\t" << currentChar << endl << endl;
 					tableStack.pop();
 					++iterator;
 				}
@@ -155,52 +155,64 @@ int		main()
 	return 0;
 }
 
-
-void 	printRule(string ruleNum)
+//Displays which production rule is used
+void printRule(string ruleNum)
 {
 	if (ruleNum == "1")
 	{
-		cout << "S -> A" << endl;
+		// S -> A
+		cout << "<Statement>\t->\t<Assignment>" << endl;
 	}
 	else if (ruleNum == "2")
 	{
-		cout << "A -> id = E;" << endl;
+		//A -> id = E
+		cout << "<Assignment>\t->\t<id> = <Expression>;" << endl;
 	}
 	else if (ruleNum == "3")
 	{
-		cout << "E -> TE'" << endl;
+		//E -> TE'
+		cout << "<Expression>\t->\t<Term> <Expression>'" << endl;
 	}
 	else if (ruleNum == "4")
 	{
-		cout << "E' -> +TE'" << endl;
+		//E' -> +TE'
+		cout << "<Expression>\t->\t<Expression> + <Term>" << endl;
 	}
 	else if (ruleNum == "5")
 	{
-		cout << "E' -> -TE'" << endl;
+		//E' -> -TE'
+		cout << "<Expression>\t->\t<Expression> - <Term>'" << endl;
 	}
 	else if (ruleNum == "6")
 	{
-		cout << "T -> FT'" << endl;
+		//T -> FT'
+		cout << "<Term>\t\t->\t<Factor> <Term>'" << endl;
 	}
 	else if (ruleNum == "7")
 	{
-		cout << "T' -> *FT'" << endl;
+		//T' -> *FT
+		cout << "<Term>\t\t->\t<Term> * <Factor>" << endl;
 	}
 	else if (ruleNum == "8")
 	{
-		cout << "T' -> /FT'" << endl;
+		//T' -> /FT'
+		cout << "<Term>\t\t->\t<Term> / <Factor>" << endl;
 	}
 	else if (ruleNum == "9")
 	{
-		cout << "F -> (E)" << endl;
+		//F -> (E)
+		cout << "<Factor>\t->\t( <Expression> )" << endl;
 	}
 	else if (ruleNum == "10")
 	{
-		cout << "F -> id" << endl;
+		//F -> id
+		cout << "<Factor>\t->\tid" << endl;
 	}
 	else if (ruleNum == "e")
 	{
-		cout << "epsilon" << endl;
+		//epsilon
+		//Not necessary since we don't know need to point this out
+		cout << "";
 	}
 	else
 	{
@@ -208,9 +220,8 @@ void 	printRule(string ruleNum)
 	}
 }
 
-
-
-bool	isTerminal(string check)
+////Determines if string is a terminal
+bool isTerminal(string check)
 {
 	if (check == "id" || check == "=" || check == "+" || check == "-" || check == "*" || check == "/" || check == "(" || check == ")" || check == "$" || check == ";")
 	{
@@ -223,8 +234,8 @@ bool	isTerminal(string check)
 }
 
 
-
-int		getRow(string check)
+//Used in parsing table
+int	getRow(string check)
 {
 	if (check == "S")
 		return 1;
@@ -244,8 +255,8 @@ int		getRow(string check)
 		return -1;
 }
 
-
-int		getCol(string check)
+//Used in parsing table
+int	getCol(string check)
 {
 	if (check == "id")
 		return 1;
@@ -295,6 +306,7 @@ bool isIdentifier(const string& str)
 	return false;
 }
 
+//Helper function for isIdentifier
 int columnNum(char c)
 {
 	if (isalpha(c))			return 0;			//column 0 = letter
