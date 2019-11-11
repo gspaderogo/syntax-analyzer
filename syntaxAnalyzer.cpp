@@ -2,83 +2,80 @@
 	Johanna Nguyen
 	Gilbert Paderogo
 	Richard Phan
-
 	CPSC 323 Compilers and Languages
 	Syntax Analyzer
 	November 5, 2019
 */
 
 #include "syntaxAnalyzer.h"
+#include "lexicalAnalyzer.h"
 using namespace std;
 
 
-int		main()
+int	analyzer(vector<tuple<string, string>> list)
 {
 	ifstream			inFile;
 	ofstream			outFile;
 	stack<string>		tableStack;
 	int					iterator = 0;
+	int					numStatements = 1;
 	int					row;
 	int					col;
-	string				stringCheck;
 	string				currentTop;
-	string				currentChar;
+	string				currentToken;
+	string				currentLexeme;
+	string				dummy;
 
 
-	string				parserTable[8][11] = { {"-1",  "id",   "=",   "+",   "-",   "*",  "/",   "(",   ")",   "$",   ";"},
-											   {"S",    "1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1"},
-											   {"A",    "2",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1"},
-											   {"E",    "3",  "-1",  "-1",  "-1",  "-1",  "-1",  "3",  "-1",  "-1",   "-1"},
-											   {"E'",   "-1",  "-1",  "4",   "5",  "-1",  "-1",  "-1",   "e",   "e",  "e"},
-											   {"T",    "6",  "-1",  "-1",  "-1",  "-1",  "-1",   "6",  "-1",  "-1",  "-1"},
-											   {"T'",   "2",  "-1",   "e",  "e",  "7",   "8",    "-1",   "e",   "e",  "e"},
-											   {"F",    "10",  "-1",  "-1",  "-1",  "-1",  "-1",  "9",  "-1",  "-1",  "-1"} };
+	string				parserTable[9][12] = { {"-1",  "id",   "=",   "+",   "-",   "*",  "/",   "(",   ")",   "$",   ";", "conditional" },
+											   {"S",    "1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1"},
+											   {"A",    "2",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1"},
+											   {"E",    "3",  "-1",  "-1",  "-1",  "-1",  "-1",  "3",  "-1",  "-1",   "-1",  "-1"},
+											   {"E'",   "-1",  "-1",  "4",   "5",  "-1",  "-1",  "-1",   "e",   "e",  "e",  "-1"},
+											   {"T",    "6",  "-1",  "-1",  "-1",  "-1",  "-1",   "6",  "-1",  "-1",  "-1",  "-1"},
+											   {"T'",   "2",  "-1",   "e",  "e",    "7",   "8",   "-1",   "e",   "e",  "e",  "-1"},
+											   {"F",    "10",  "-1",  "-1",  "-1",  "-1",  "-1",  "9",  "-1",  "-1",  "-1",   "-1"},
+											   {"C",	"-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1", "12"} };
 
-	inFile.open("input2.txt");
-
-	if (inFile.fail())
-	{
-		cout << "There was an error opening the file..." << endl;
-		return 0;
+	for (int i = 0; i < list.size(); i++) {
+		if (get<0>(list.at(i)) == "EOS") {
+			numStatements++;
+		}
 	}
 
-
-	while (!inFile.eof())
-	{
-		iterator = 0;
-
+	for (int i = 0; i < numStatements; i++) {
 		// push "$" and starting "S" symbol
 		tableStack.push("$");
 		tableStack.push("S");
 
-		// grab the test string 
-		getline(inFile, stringCheck);
-
-
-		// get rid of whitespace
-		stringCheck.erase(remove(stringCheck.begin(), stringCheck.end(), ' '), stringCheck.end());
-
 		// add "$" to the end of stringCheck 
-		stringCheck.append("$");
-		cout << stringCheck << endl;
+		list.at(list.size() - 1) = make_tuple("EOS", "$");
 
 
 		while (!tableStack.empty())
 		{
 			currentTop = tableStack.top();
-			currentChar = stringCheck[iterator];
+			currentToken = get<0>(list.at(iterator));
+			currentLexeme = get<1>(list.at(iterator));
 
-			if (isIdentifier(currentChar))
+			if (currentToken == "CONDITIONAL")
 			{
-				currentChar = "id";
+				currentToken = "conditional";
+				currentLexeme = "conditional";
+			}
+
+			if (currentToken == "IDENTIFIER")
+			{
+				currentToken = "id";
+				currentLexeme = "id";
 			}
 
 			// terminal at top of stack
 			if (isTerminal(currentTop))
 			{
-				if (currentTop == currentChar)
+				if (currentTop == currentLexeme)
 				{
-					cout << "MATCH FOUND:\t" << currentChar << endl << endl;
+					cout << "Token: " << currentToken << "\t\tLexeme: " << get<1>(list.at(iterator)) << endl << endl;
 					tableStack.pop();
 					++iterator;
 				}
@@ -88,7 +85,14 @@ int		main()
 			else
 			{
 				row = getRow(currentTop);
-				col = getCol(currentChar);
+				col = getCol(currentLexeme);
+
+				if (row == -1) {
+					cout << "Error: unexpected nonterminal" << endl;
+				}
+				if (row == -1) {
+					cout << "Error: unexpected terminal" << endl;
+				}
 
 				tableStack.pop();
 				printRule(parserTable[row][col]);
@@ -148,9 +152,22 @@ int		main()
 				{
 					tableStack.push("id");
 				}
+				
+				else if (parserTable[row][col] == "11")
+				{
+					tableStack.push("C");
+				}
+				else if (parserTable[row][col] == "12")
+				{
+					tableStack.push(")");
+					tableStack.push("E");
+					tableStack.push("(");
+					tableStack.push("conditional");
+				}
+				
 			}
-
 		}
+		cout << "\n---------- END OF STATEMENT ----------\n" << endl;
 	}
 	return 0;
 }
@@ -208,6 +225,16 @@ void printRule(string ruleNum)
 		//F -> id
 		cout << "<Factor>\t->\tid" << endl;
 	}
+	else if (ruleNum == "11")
+	{
+		//S -> C
+		cout << "<Statement>\t-><Conditional>";
+	}
+	else if (ruleNum == "12")
+	{
+		//C -> conditional ( E )
+		cout << "<Conditional>\t->conditional( <Expression> )";
+	}
 	else if (ruleNum == "e")
 	{
 		//epsilon
@@ -223,14 +250,11 @@ void printRule(string ruleNum)
 ////Determines if string is a terminal
 bool isTerminal(string check)
 {
-	if (check == "id" || check == "=" || check == "+" || check == "-" || check == "*" || check == "/" || check == "(" || check == ")" || check == "$" || check == ";")
+	if (check == "id" || check == "=" || check == "+" || check == "-" || check == "*" || check == "/" || check == "(" || check == ")" || check == "$" || check == ";" || check == "conditional")
 	{
 		return true;
 	}
-	else
-	{
-		return false;
-	}
+	return false;
 }
 
 
@@ -251,6 +275,8 @@ int	getRow(string check)
 		return 6;
 	else if (check == "F")
 		return 7;
+	else if (check == "C")
+		return 8;
 	else
 		return -1;
 }
@@ -278,45 +304,8 @@ int	getCol(string check)
 		return 9;
 	else if (check == ";")
 		return 10;
+	else if (check == "conditional")
+		return 11;
 	else
 		return -1;
 }
-
-
-//Returns true if identifier
-bool isIdentifier(const string& str)
-{												//DFSM TABLE
-	const int STATES = 4, INPUTS = 5;			//		l	d	$	.	other
-	int dfsmTable[STATES][INPUTS] =				//0	|	0	0	0	0	0	(dead state)
-	{ { 0, 0, 0, 0, 0 },						//1	|	2	0	0	0	0
-	{ 2, 0, 0, 0, 0 },							//2	|	2	2	3	0	0
-	{ 2, 2, 3, 0, 0 },							//3	|	0	0	0	0	0
-	{ 0, 0, 0, 0, 0 } };						//Final states: 2, 3
-
-	int state = 1;								//Initial state: 1
-	int length = str.length();
-	for (int i = 0; i < length; ++i)			//Traverses through lexeme
-	{
-		int input = columnNum(str[i]);			//Finds column number based on each character in the lexeme
-		state = dfsmTable[state][input];		//Determines new state based on input
-	}
-	if (state == 2 || state == 3)
-		return true;
-
-	return false;
-}
-
-//Helper function for isIdentifier
-int columnNum(char c)
-{
-	if (isalpha(c))			return 0;			//column 0 = letter
-	else if (isdigit(c))	return 1;			//column 1 = digit
-	else if (c == '$')		return 2;			//column 2 = $
-	else if (c == '.')		return 3;			//column 3 = .
-	return 4;									//column 4 = all other characters
-}
-
-
-
-
-

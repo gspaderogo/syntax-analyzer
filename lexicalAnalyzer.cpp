@@ -2,7 +2,6 @@
 	Johanna Nguyen
 	Gilbert Paderogo
 	Richard Phan
-
 	CPSC 323 Compilers and Languages
 	Syntax Analyzer
 	November 5, 2019
@@ -23,7 +22,7 @@ int columnNum(char c)
 
 
 //Returns true if identifier
-bool isIdentifier(const string &str)
+bool isIdentifier(const string& str)
 {												//DFSM TABLE
 	const int STATES = 4, INPUTS = 5;			//		l	d	$	.	other
 	int dfsmTable[STATES][INPUTS] =				//0	|	0	0	0	0	0	(dead state)
@@ -47,11 +46,25 @@ bool isIdentifier(const string &str)
 
 
 //Returns true if keyword
-bool isKeyword(const string &lex)
+bool isKeyword(const string& lex)
 {
-	string keyword[15] = { "function", "int", "boolean", "real",
-		"if", "ifend", "else", "return", "put", "get", "while", "whileend",
-		"true", "false", "whileend" };
+	string keyword[10] = { "function", "int", "boolean", "real",
+		 "return", "put", "get", "true", "false", "whileend" };
+
+	size_t lexLength = lex.length();
+	for (int i = 0; i <= 13; ++i)				//Directly compares lexeme to already-known keywords
+	{
+		if (lex == keyword[i])
+			return true;
+	}
+	return false;
+}
+
+
+//Returns if conditional keyword
+bool isConditional(const string& lex)
+{
+	string keyword[4] = { "while", "for", "if", "else" };
 
 	size_t lexLength = lex.length();
 	for (int i = 0; i <= 13; ++i)				//Directly compares lexeme to already-known keywords
@@ -64,7 +77,7 @@ bool isKeyword(const string &lex)
 
 
 //Returns true if integer
-bool isInteger(const string &str)
+bool isInteger(const string& str)
 {												//DFSM TABLE
 	const int STATES = 3, INPUTS = 5;			//		l	d	$	.	other
 	int dfsmTable[STATES][INPUTS] =				//0	|	0	0	0	0	0	(dead state)
@@ -87,7 +100,7 @@ bool isInteger(const string &str)
 
 
 //Returns true if float
-bool isFloat(const string &str)
+bool isFloat(const string& str)
 {
 	const int STATES = 5, INPUTS = 5;			//		l	d	$	.	other
 	int dfsmTable[STATES][INPUTS] =				//0	|	0	0	0	0	0	(dead state)
@@ -112,7 +125,7 @@ bool isFloat(const string &str)
 
 
 //Returns true if separator
-bool isSeparator(const string &lex, string &nextLex, ifstream &inFile)
+bool isSeparator(const string& lex, string& nextLex, ifstream& inFile)
 {
 	string separators[7] = { "(", ")", ",", "{", "}", ";", ":" };
 
@@ -126,7 +139,7 @@ bool isSeparator(const string &lex, string &nextLex, ifstream &inFile)
 
 
 //Returns true if operator
-bool isOperator(const string &lex, string &nextLex, ifstream &inFile)
+bool isOperator(const string& lex, string& nextLex, ifstream& inFile)
 {
 	string operators[7] = { "+", ">", "<", "-", "*", "/", "=" };
 	for (int i = 0; i < 7; ++i)
@@ -139,7 +152,7 @@ bool isOperator(const string &lex, string &nextLex, ifstream &inFile)
 
 
 //Return true if comment
-bool isComment(char c, ifstream &inFile)
+bool isComment(char c, ifstream& inFile)
 {
 	char next;
 	if (c == '!')									//Identifies beginning of comment
@@ -165,7 +178,7 @@ bool isComment(char c, ifstream &inFile)
 
 
 //Does actual lexer work
-tuple<string, string> backgroundLex(ifstream &inFile)
+tuple<string, string> backgroundLex(ifstream& inFile)
 {
 	char c;
 	string lex, nextLex;
@@ -175,7 +188,7 @@ tuple<string, string> backgroundLex(ifstream &inFile)
 	{
 		inFile.get(c);											//Reads in first character
 
-		while (inFile && (isspace(c) || c == '\n'))				//Reads leading whitespace
+		while (inFile && (c == ' '))				//Reads leading whitespace
 		{
 			inFile.get(c);
 		}
@@ -187,7 +200,13 @@ tuple<string, string> backgroundLex(ifstream &inFile)
 			inFile.get(c);
 
 			nextLex = c;
-			if (isspace(c))
+
+			if (c == '\n')
+			{
+				return make_tuple("EOS", "$");
+			}
+
+			else if (isspace(c))
 			{
 				if (lex != "")									//In case a comment was found at end of lexeme
 					endLex = true;
@@ -222,6 +241,9 @@ tuple<string, string> backgroundLex(ifstream &inFile)
 			if (isKeyword(lex))
 				return make_tuple("KEYWORD", lex);
 
+			//else if (isConditional(lex))
+			//	return make_tuple("CONDITIONAL", lex);
+
 			else
 				return make_tuple("IDENTIFIER", lex);
 		}
@@ -243,7 +265,7 @@ tuple<string, string> backgroundLex(ifstream &inFile)
 
 
 //Provides each token/lexeme pair with proper formatting
-tuple<string, string> lexer(ifstream&inFile, ofstream& outFile)
+tuple<string, string> lexer(ifstream& inFile, ofstream& outFile)
 {
 
 	tuple<string, string> token = backgroundLex(inFile);
@@ -254,4 +276,3 @@ tuple<string, string> lexer(ifstream&inFile, ofstream& outFile)
 
 	return token;
 }
-
