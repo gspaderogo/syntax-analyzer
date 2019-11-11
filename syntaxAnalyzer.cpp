@@ -19,9 +19,9 @@ int	analyzer(vector<tuple<string, string>> list)
 	ofstream			outFile;
 	stack<string>		tableStack;
 	int					iterator = 0;
+	int					numStatements = 1;
 	int					row;
 	int					col;
-	tuple<string, string>				stringCheck;
 	string				currentTop;
 	string				currentToken;
 	string				currentLexeme;
@@ -36,115 +36,121 @@ int	analyzer(vector<tuple<string, string>> list)
 											   {"T'",   "2",  "-1",   "e",  "e",  "7",   "8",    "-1",   "e",   "e",  "e"},
 											   {"F",    "10",  "-1",  "-1",  "-1",  "-1",  "-1",  "9",  "-1",  "-1",  "-1"} };
 
-	iterator = 0;
-
-	// push "$" and starting "S" symbol
-	tableStack.push("$");
-	tableStack.push("S");
-
-	// add "$" to the end of stringCheck 
-	list.at(list.size() - 1) = make_tuple("EOS", "$");
-
 	for (int i = 0; i < list.size(); i++) {
-		cout << get<0>(list.at(i)) << '\t' << get<1>(list.at(i)) << endl;
+		if (get<0>(list.at(i)) == "EOS") {
+			numStatements++;
+		}
 	}
 
-	while (!tableStack.empty())
-	{
-		currentTop = tableStack.top();
-		currentToken = get<0>(list.at(iterator));
-		currentLexeme = get<1>(list.at(iterator));
+	for (int i = 0; i < numStatements; i++) {
+		// push "$" and starting "S" symbol
+		tableStack.push("$");
+		tableStack.push("S");
 
-		if (currentToken == "IDENTIFIER")
-		{
-			currentToken = "id";
-			currentLexeme = "id";
-		}
+		// add "$" to the end of stringCheck 
+		list.at(list.size() - 1) = make_tuple("EOS", "$");
 
-		// terminal at top of stack
-		if (isTerminal(currentTop))
+		//for (int j = 0; j < list.size(); j++) {										// used to check lexer data
+		//	cout << get<0>(list.at(j)) << '\t' << get<1>(list.at(j)) << endl;
+		//}
+
+		while (!tableStack.empty())
 		{
-			if (currentTop == currentLexeme)
+			currentTop = tableStack.top();
+			currentToken = get<0>(list.at(iterator));
+			currentLexeme = get<1>(list.at(iterator));
+
+			if (currentToken == "IDENTIFIER")
 			{
-				cout << "Token: " << currentToken << "\t\tLexeme: " << currentLexeme << endl << endl;
+				currentToken = "id";
+				currentLexeme = "id";
+			}
+
+			// terminal at top of stack
+			if (isTerminal(currentTop))
+			{
+				if (currentTop == currentLexeme)
+				{
+					cout << "Token: " << currentToken << "\t\tLexeme: " << get<1>(list.at(iterator)) << endl << endl;
+					tableStack.pop();
+					++iterator;
+				}
+			}
+
+			// non-terminal, so check which rule to use and push to stack 
+			else
+			{
+				row = getRow(currentTop);
+				col = getCol(currentLexeme);
+
+				if (row == -1) {
+					cout << "Error: unexpected nonterminal" << endl;
+				}
+				if (row == -1) {
+					cout << "Error: unexpected terminal" << endl;
+				}
+
 				tableStack.pop();
-				++iterator;
+				printRule(parserTable[row][col]);
+
+				if (parserTable[row][col] == "1")
+				{
+					tableStack.push("A");
+				}
+				else if (parserTable[row][col] == "2")
+				{
+					tableStack.push(";");
+					tableStack.push("E");
+					tableStack.push("=");
+					tableStack.push("id");
+				}
+				else if (parserTable[row][col] == "3")
+				{
+					tableStack.push("E'");
+					tableStack.push("T");
+				}
+				else if (parserTable[row][col] == "4")
+				{
+					tableStack.push("E'");
+					tableStack.push("T");
+					tableStack.push("+");
+				}
+				else if (parserTable[row][col] == "5")
+				{
+					tableStack.push("E'");
+					tableStack.push("T");
+					tableStack.push("-");
+				}
+				else if (parserTable[row][col] == "6")
+				{
+					tableStack.push("T'");
+					tableStack.push("F");
+				}
+				else if (parserTable[row][col] == "7")
+				{
+					tableStack.push("T'");
+					tableStack.push("F");
+					tableStack.push("*");
+				}
+				else if (parserTable[row][col] == "8")
+				{
+					tableStack.push("T'");
+					tableStack.push("F");
+					tableStack.push("/");
+				}
+				else if (parserTable[row][col] == "9")
+				{
+					tableStack.push(")");
+					tableStack.push("E");
+					tableStack.push("(");
+				}
+				else if (parserTable[row][col] == "10")
+				{
+					tableStack.push("id");
+				}
 			}
 		}
-
-		// non-terminal, so check which rule to use and push to stack 
-		else
-		{
-			row = getRow(currentTop);
-			col = getCol(currentLexeme);
-
-			if (row == -1) {
-				cout << "Error: unexpected nonterminal" << endl;
-			}
-			if (row == -1) {
-				cout << "Error: unexpected terminal" << endl;
-			}
-
-			tableStack.pop();
-			printRule(parserTable[row][col]);
-
-			if (parserTable[row][col] == "1")
-			{
-				tableStack.push("A");
-			}
-			else if (parserTable[row][col] == "2")
-			{
-				tableStack.push(";");
-				tableStack.push("E");
-				tableStack.push("=");
-				tableStack.push("id");
-			}
-			else if (parserTable[row][col] == "3")
-			{
-				tableStack.push("E'");
-				tableStack.push("T");
-			}
-			else if (parserTable[row][col] == "4")
-			{
-				tableStack.push("E'");
-				tableStack.push("T");
-				tableStack.push("+");
-			}
-			else if (parserTable[row][col] == "5")
-			{
-				tableStack.push("E'");
-				tableStack.push("T");
-				tableStack.push("-");
-			}
-			else if (parserTable[row][col] == "6")
-			{
-				tableStack.push("T'");
-				tableStack.push("F");
-			}
-			else if (parserTable[row][col] == "7")
-			{
-				tableStack.push("T'");
-				tableStack.push("F");
-				tableStack.push("*");
-			}
-			else if (parserTable[row][col] == "8")
-			{
-				tableStack.push("T'");
-				tableStack.push("F");
-				tableStack.push("/");
-			}
-			else if (parserTable[row][col] == "9")
-			{
-				tableStack.push(")");
-				tableStack.push("E");
-				tableStack.push("(");
-			}
-			else if (parserTable[row][col] == "10")
-			{
-				tableStack.push("id");
-			}
-		}
-
+		cout << "\n---------- END OF STATEMENT ----------\n" << endl;
 	}
 	return 0;
 }

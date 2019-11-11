@@ -2,7 +2,6 @@
 	Johanna Nguyen
 	Gilbert Paderogo
 	Richard Phan
-
 	CPSC 323 Compilers and Languages
 	Syntax Analyzer
 	November 5, 2019
@@ -175,7 +174,7 @@ tuple<string, string> backgroundLex(ifstream &inFile)
 	{
 		inFile.get(c);											//Reads in first character
 
-		while (inFile && (isspace(c) || c == '\n'))				//Reads leading whitespace
+		while (inFile && (c == ' '))				//Reads leading whitespace
 		{
 			inFile.get(c);
 		}
@@ -187,7 +186,13 @@ tuple<string, string> backgroundLex(ifstream &inFile)
 			inFile.get(c);
 
 			nextLex = c;
-			if (isspace(c))
+
+			if (c == '\n')
+			{
+				return make_tuple("EOS", "$");
+			}
+
+			else if (isspace(c))
 			{
 				if (lex != "")									//In case a comment was found at end of lexeme
 					endLex = true;
@@ -254,4 +259,3 @@ tuple<string, string> lexer(ifstream&inFile, ofstream& outFile)
 
 	return token;
 }
-
