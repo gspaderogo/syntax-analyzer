@@ -241,8 +241,8 @@ tuple<string, string> backgroundLex(ifstream& inFile)
 			if (isKeyword(lex))
 				return make_tuple("KEYWORD", lex);
 
-			//else if (isConditional(lex))
-			//	return make_tuple("CONDITIONAL", lex);
+			else if (isConditional(lex))
+				return make_tuple("CONDITIONAL", lex);
 
 			else
 				return make_tuple("IDENTIFIER", lex);
