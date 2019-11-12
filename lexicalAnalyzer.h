@@ -16,38 +16,41 @@
 #include <iomanip>
 #include <tuple>
 #include <string>
+#include <vector>
 using namespace std;
 
 //Returns column number based on type of character
 int columnNum(char c);
 
 //Identifiers
-bool isIdentifier(const string &str);
+bool isIdentifier(const string& str);
 
 //Keywords
-bool isKeyword(const string &str);
+bool isKeyword(const string& str);
+
+//Conditional Keywords
+bool isConditional(const string& str);
 
 //Integers
-bool isInteger(const string &str);
+bool isInteger(const string& str);
 
 //Floating Point
-bool isFloat(const string &str);
+bool isFloat(const string& str);
 
 //Separators
-bool isSeparator(const string& lex, string &nextLex, ifstream &inFile);
+bool isSeparator(const string& lex, string& nextLex, ifstream& inFile);
 
 //Operators
-bool isOperator(const string& lex, string &nextLex, ifstream &inFile);
+bool isOperator(const string& lex, string& nextLex, ifstream& inFile);
 
 //Comments
-bool isComment(char c, ifstream &inFile);
+bool isComment(char c, ifstream& inFile);
 
 //Does actual lexer work
-tuple<string, string> backgroundLex(ifstream &inFile);
+tuple<string, string> backgroundLex(ifstream& inFile);
 
 //Prints the lexer
 tuple<string, string> lexer(ifstream& inFile, ofstream& outFile);
-
 
 
 #endif
