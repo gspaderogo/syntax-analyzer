@@ -60,7 +60,7 @@ int	analyzer(vector<tuple<string, string>> list)
 
 			if (currentToken == "CONDITIONAL")
 			{
-				currentToken = "conditional";
+				currentToken = "COND";
 				currentLexeme = "conditional";
 			}
 
@@ -228,12 +228,12 @@ void printRule(string ruleNum)
 	else if (ruleNum == "11")
 	{
 		//S -> C
-		cout << "<Statement>\t-><Conditional>";
+		cout << "<Statement>\t->\t<Conditional>" << endl;
 	}
 	else if (ruleNum == "12")
 	{
 		//C -> conditional ( E )
-		cout << "<Conditional>\t->conditional( <Expression> )";
+		cout << "<Conditional>\t->\tconditional( <Expression> )" << endl;
 	}
 	else if (ruleNum == "e")
 	{

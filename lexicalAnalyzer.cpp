@@ -64,7 +64,7 @@ bool isKeyword(const string& lex)
 //Returns if conditional keyword
 bool isConditional(const string& lex)
 {
-	string keyword[4] = { "while", "for", "if", "else" };
+	string keyword[5] = { "while", "for", "if", "else", "whileend" };
 
 	size_t lexLength = lex.length();
 	for (int i = 0; i <= 13; ++i)				//Directly compares lexeme to already-known keywords
@@ -218,7 +218,7 @@ tuple<string, string> backgroundLex(ifstream& inFile)
 			else if (isSeparator(lex, nextLex, inFile))
 			{
 				if (lex == "")									//Start of lexeme is found
-					return make_tuple("SEPARATOR", nextLex);
+					return make_tuple("SEP", nextLex);
 
 				inFile.putback(c);								//Separator was found, put back
 				endLex = true;
