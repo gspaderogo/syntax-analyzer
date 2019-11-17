@@ -26,7 +26,7 @@ int	analyzer(vector<tuple<string, string>> list)
 	string				currentLexeme;
 
 
-	string				parserTable[9][12] = { {"-1",  "id",   "=",   "+",   "-",   "*",  "/",   "(",   ")",   "$",   ";", "conditional" },
+	string				parserTable[9][12] = { {"-1",  "id",   "=",   "+",   "-",   "*",  "/",   "(",   ")",   "$",   ";", "select" },
 											   {"S",    "1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "11"},
 											   {"A",    "2",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1"},
 											   {"E",    "3",  "-1",  "-1",  "-1",  "-1",  "-1",  "3",  "-1",  "-1",   "-1",  "-1"},
@@ -34,7 +34,7 @@ int	analyzer(vector<tuple<string, string>> list)
 											   {"T",    "6",  "-1",  "-1",  "-1",  "-1",  "-1",   "6",  "-1",  "-1",  "-1",  "-1"},
 											   {"T'",   "2",  "-1",   "e",  "e",    "7",   "8",   "-1",   "e",   "e",  "e",  "-1"},
 											   {"F",    "10",  "-1",  "-1",  "-1",  "-1",  "-1",  "9",  "-1",  "-1",  "-1",   "-1"},
-											   {"C",	"-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1", "12"} };
+											   {"SEL",	"-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1",  "-1", "12"} };
 
 	for (int i = 0; i < list.size(); i++) {
 		if (get<0>(list.at(i)) == "EOS") {
@@ -57,10 +57,10 @@ int	analyzer(vector<tuple<string, string>> list)
 			currentToken = get<0>(list.at(iterator));
 			currentLexeme = get<1>(list.at(iterator));
 
-			if (currentToken == "CONDITIONAL")
+			if (currentToken == "SELECT")
 			{
-				currentToken = "COND";
-				currentLexeme = "conditional";
+				currentToken = "select";
+				currentLexeme = "select";
 			}
 
 			if (currentToken == "IDENTIFIER")
@@ -161,7 +161,7 @@ int	analyzer(vector<tuple<string, string>> list)
 					tableStack.push(")");
 					tableStack.push("E");
 					tableStack.push("(");
-					tableStack.push("conditional");
+					tableStack.push("select");
 				}
 				
 			}
@@ -227,12 +227,12 @@ void printRule(string ruleNum)
 	else if (ruleNum == "11")
 	{
 		//S -> C
-		cout << "<Statement>\t->\t<Conditional>" << endl;
+		cout << "<Statement>\t->\t<Select>" << endl;
 	}
 	else if (ruleNum == "12")
 	{
-		//C -> conditional ( E )
-		cout << "<Conditional>\t->\tconditional( <Expression> )" << endl;
+		//SEL -> select ( E )
+		cout << "<Select>\t->\tselect( <Expression> )" << endl;
 	}
 	else if (ruleNum == "e")
 	{
@@ -249,7 +249,7 @@ void printRule(string ruleNum)
 ////Determines if string is a terminal
 bool isTerminal(string check)
 {
-	if (check == "id" || check == "=" || check == "+" || check == "-" || check == "*" || check == "/" || check == "(" || check == ")" || check == "$" || check == ";" || check == "conditional")
+	if (check == "id" || check == "=" || check == "+" || check == "-" || check == "*" || check == "/" || check == "(" || check == ")" || check == "$" || check == ";" || check == "select")
 	{
 		return true;
 	}
@@ -303,7 +303,7 @@ int	getCol(string check)
 		return 9;
 	else if (check == ";")
 		return 10;
-	else if (check == "conditional")
+	else if (check == "select")
 		return 11;
 	else
 		return -1;

@@ -28,8 +28,8 @@ bool isIdentifier(const string& str);
 //Keywords
 bool isKeyword(const string& str);
 
-//Conditional Keywords
-bool isConditional(const string& str);
+//Select Keywords
+bool isSelect(const string& str);
 
 //Integers
 bool isInteger(const string& str);

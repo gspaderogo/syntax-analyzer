@@ -61,8 +61,8 @@ bool isKeyword(const string& lex)
 }
 
 
-//Returns if conditional keyword
-bool isConditional(const string& lex)
+//Returns if select keyword
+bool isSelect(const string& lex)
 {
 	string keyword[5] = { "while", "for", "if", "else", "whileend" };
 
@@ -241,8 +241,8 @@ tuple<string, string> backgroundLex(ifstream& inFile)
 			if (isKeyword(lex))
 				return make_tuple("KEYWORD", lex);
 
-			else if (isConditional(lex))
-				return make_tuple("CONDITIONAL", lex);
+			else if (isSelect(lex))
+				return make_tuple("SELECT", lex);
 
 			else
 				return make_tuple("IDENTIFIER", lex);
