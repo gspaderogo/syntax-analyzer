@@ -226,7 +226,7 @@ void printRule(string ruleNum)
 	}
 	else if (ruleNum == "11")
 	{
-		//S -> C
+		//S -> SEL
 		cout << "<Statement>\t->\t<Select>" << endl;
 	}
 	else if (ruleNum == "12")
