@@ -24,7 +24,6 @@ int	analyzer(vector<tuple<string, string>> list)
 	string				currentTop;
 	string				currentToken;
 	string				currentLexeme;
-	string				dummy;
 
 
 	string				parserTable[9][12] = { {"-1",  "id",   "=",   "+",   "-",   "*",  "/",   "(",   ")",   "$",   ";", "conditional" },
