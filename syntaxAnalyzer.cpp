@@ -154,7 +154,7 @@ int	analyzer(vector<tuple<string, string>> list)
 				
 				else if (parserTable[row][col] == "11")
 				{
-					tableStack.push("C");
+					tableStack.push("SEL");
 				}
 				else if (parserTable[row][col] == "12")
 				{
