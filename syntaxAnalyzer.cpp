@@ -14,7 +14,6 @@ using namespace std;
 
 int	analyzer(vector<tuple<string, string>> list)
 {
-	ifstream			inFile;
 	ofstream			outFile;
 	stack<string>		tableStack;
 	int					iterator = 0;
@@ -42,7 +41,7 @@ int	analyzer(vector<tuple<string, string>> list)
 		}
 	}
 
-	for (int i = 0; i < numStatements; i++) {
+	for (int i = 0; i < numStatements - 1; i++) {
 		// push "$" and starting "S" symbol
 		tableStack.push("$");
 		tableStack.push("S");
@@ -89,7 +88,7 @@ int	analyzer(vector<tuple<string, string>> list)
 				if (row == -1) {
 					cout << "Error: unexpected nonterminal" << endl;
 				}
-				if (row == -1) {
+				if (col == -1) {
 					cout << "Error: unexpected terminal" << endl;
 				}
 
@@ -274,7 +273,7 @@ int	getRow(string check)
 		return 6;
 	else if (check == "F")
 		return 7;
-	else if (check == "C")
+	else if (check == "SEL")
 		return 8;
 	else
 		return -1;
