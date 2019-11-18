@@ -1,5 +1,7 @@
+
+
+
+
 a = e + f;
 b = d - e;
-c + d
 while ( a )
-c + d = f;

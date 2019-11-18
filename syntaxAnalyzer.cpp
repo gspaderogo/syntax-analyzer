@@ -14,7 +14,7 @@ using namespace std;
 
 int	analyzer(vector<tuple<string, string>> list)
 {
-	ofstream			outFile;
+	ofstream 			outFile("output.txt");
 	stack<string>		tableStack;
 	int					iterator = 0;
 	int					numStatements = 1;
@@ -73,7 +73,7 @@ int	analyzer(vector<tuple<string, string>> list)
 			{
 				if (currentTop == currentLexeme)
 				{
-					cout << "Token: " << currentToken << "\t\tLexeme: " << get<1>(list.at(iterator)) << endl << endl;
+					outFile << "Token: " << currentToken << "\t\tLexeme: " << get<1>(list.at(iterator)) << endl << endl;
 					tableStack.pop();
 					++iterator;
 				}
@@ -81,10 +81,13 @@ int	analyzer(vector<tuple<string, string>> list)
 				// error message
 				else 
 				{
-					cout << "Error...unexpected terminal..." << endl;
-					cout << "Current terminal is: " << currentLexeme << endl; 
-					cout << "Expected terminal is: " << currentTop << endl; 
-					cout << "Exiting program..." << endl << endl;
+					outFile << "Error...unexpected terminal..." << endl;
+					outFile << "Current terminal is: " << currentLexeme << endl; 
+					outFile << "Expected terminal is: " << currentTop << endl; 
+					outFile << "Exiting parser..." << endl << endl;
+					outFile.close();
+
+					cout << "Error occured please check 'output.txt for details" << endl;
 					exit(EXIT_FAILURE);
 
 				}
@@ -97,14 +100,14 @@ int	analyzer(vector<tuple<string, string>> list)
 				col = getCol(currentLexeme);
 
 				if (row == -1) {
-					cout << "Error: unexpected nonterminal" << endl;
+					outFile << "Error: unexpected nonterminal" << endl;
 				}
 				if (col == -1) {
-					cout << "Error: unexpected terminal" << endl;
+					outFile << "Error: unexpected terminal" << endl;
 				}
 
 				tableStack.pop();
-				printRule(parserTable[row][col]);
+				printRule(parserTable[row][col], outFile);
 
 				if (parserTable[row][col] == "1")
 				{
@@ -176,90 +179,97 @@ int	analyzer(vector<tuple<string, string>> list)
 				
 			}
 		}
-		cout << "\n---------- END OF STATEMENT ----------\n" << endl;
+		outFile << "\n---------- END OF STATEMENT ----------\n" << endl;
 	}
+
+	outFile.close();
 	return 0;
 }
 
 //Displays which production rule is used
-void printRule(string ruleNum)
+void printRule(string ruleNum, ofstream &output)
 {
 	if (ruleNum == "1")
 	{
 		// S -> A
-		cout << "<Statement>\t->\t<Assignment>" << endl;
+		output << "<Statement>\t->\t<Assignment>" << endl;
 	}
 	else if (ruleNum == "2")
 	{
 		//A -> id = E
-		cout << "<Assignment>\t->\t<id> = <Expression>;" << endl;
+		output << "<Assignment>\t->\t<id> = <Expression>;" << endl;
 	}
 	else if (ruleNum == "3")
 	{
 		//E -> TE'
 		//cout << "<Expression>\t->\t<Term> <Expression>'" << endl;
-		cout << "<Expression>\t->\t<Term> <ExpressionPrime>" << endl;
+		output << "<Expression>\t->\t<Term> <ExpressionPrime>" << endl;
 	}
 	else if (ruleNum == "4")
 	{
 		//E' -> +TE'
 		//cout << "<Expression>\t->\t<Expression> + <Term>" << endl;
-		cout << "<Expression>\t->\t+ <Term> <ExpressionPrime>" << endl;
+		output << "<Expression>\t->\t+ <Term> <ExpressionPrime>" << endl;
 	}
 	else if (ruleNum == "5")
 	{
 		//E' -> -TE'
 		//cout << "<Expression>\t->\t<Expression> - <Term>'" << endl;
-		cout << "<Expression>\t->\t- <Term> <ExpressionPrime>" << endl;
+		output << "<Expression>\t->\t- <Term> <ExpressionPrime>" << endl;
 	}
 	else if (ruleNum == "6")
 	{
 		//T -> FT'
 		//cout << "<Term>\t\t->\t<Factor> <Term>'" << endl;
-		cout << "<Term>\t\t->\t<Factor> <TermPrime>" << endl;
+		output << "<Term>\t\t->\t<Factor> <TermPrime>" << endl;
 	}
 	else if (ruleNum == "7")
 	{
 		//T' -> *FT'
 		//cout << "<Term>\t\t->\t<Term> * <Factor>" << endl;
-		cout << "<Term>\t\t->\t* <Factor> <TermPrime>" << endl;
+		output << "<Term>\t\t->\t* <Factor> <TermPrime>" << endl;
 	}
 	else if (ruleNum == "8")
 	{
 		//T' -> /FT'
 		//cout << "<Term>\t\t->\t<Term> / <Factor>" << endl;
-		cout << "<Term>\t\t->\t/ <Factor> <TermPrime>" << endl;
+		output << "<Term>\t\t->\t/ <Factor> <TermPrime>" << endl;
 	}
 	else if (ruleNum == "9")
 	{
 		//F -> (E)
-		cout << "<Factor>\t->\t( <Expression> )" << endl;
+		output << "<Factor>\t->\t( <Expression> )" << endl;
 	}
 	else if (ruleNum == "10")
 	{
 		//F -> id
-		cout << "<Factor>\t->\tid" << endl;
+		output << "<Factor>\t->\tid" << endl;
 	}
 	else if (ruleNum == "11")
 	{
 		//S -> SEL
-		cout << "<Statement>\t->\t<Select>" << endl;
+		output << "<Statement>\t->\t<Select>" << endl;
 	}
 	else if (ruleNum == "12")
 	{
 		//SEL -> select ( E )
-		cout << "<Select>\t->\tselect( <Expression> )" << endl;
+		output << "<Select>\t->\tselect( <Expression> )" << endl;
 	}
 	else if (ruleNum == "e")
 	{
 		//epsilon
 		//Not necessary since we don't know need to point this out
-		cout << "";
+		output << "";
 	}
-	else
+	/*else // error message and exit program
 	{
-		cout << "Error" << endl;
-	}
+		output << "Unexpected Error...Incorrect rule usage" << endl;
+		output << "Exiting parser..." << endl;
+		output.close();
+
+		cout << "Error occured please check 'output.txt for details" << endl;
+		exit(EXIT_FAILURE);
+	}*/
 }
 
 ////Determines if string is a terminal

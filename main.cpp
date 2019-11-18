@@ -18,7 +18,8 @@ int main()
 	ofstream outFile("output.txt");
 
 	cout << "------------------------------------------------------------\n"
-		<< "LEXICAL ANALYZER by Johanna Nguyen\n"
+		<< "SYNTAX ANALYZER by:\n"
+		<< "Johanna Nguyen, Gilbert Paderogo, Richard Phan\n"
 		<< "------------------------------------------------------------\n"
 		<< "Enter a text file location and name.\n"
 		<< "Remember to use double slashes!\n\n"
@@ -54,7 +55,6 @@ int main()
 		<< "\nError - file could not be opened.\n\n";
 
 	inFile.close();
-	outFile.close();
 
 	system("Pause");
 	return 0;

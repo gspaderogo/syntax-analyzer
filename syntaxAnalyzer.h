@@ -33,7 +33,7 @@ int	getCol(string check);
 bool isTerminal(string check);
 
 //Displays which production rule is used
-void printRule(string ruleNum);
+void printRule(string ruleNum, ofstream &output);
 
 //Determines if string is an identifier
 bool isIdentifier(const string& str);
