@@ -41,7 +41,7 @@ int	analyzer(vector<tuple<string, string>> list)
 		}
 	}
 
-	for (int i = 0; i < numStatements - 1; i++) {
+	for (int i = 0; i < numStatements; i++) {
 		// push "$" and starting "S" symbol
 		tableStack.push("$");
 		tableStack.push("S");
@@ -76,6 +76,17 @@ int	analyzer(vector<tuple<string, string>> list)
 					cout << "Token: " << currentToken << "\t\tLexeme: " << get<1>(list.at(iterator)) << endl << endl;
 					tableStack.pop();
 					++iterator;
+				}
+
+				// error message
+				else 
+				{
+					cout << "Error...unexpected terminal..." << endl;
+					cout << "Current terminal is: " << currentLexeme << endl; 
+					cout << "Expected terminal is: " << currentTop << endl; 
+					cout << "Exiting program..." << endl << endl;
+					exit(EXIT_FAILURE);
+
 				}
 			}
 
@@ -186,32 +197,38 @@ void printRule(string ruleNum)
 	else if (ruleNum == "3")
 	{
 		//E -> TE'
-		cout << "<Expression>\t->\t<Term> <Expression>'" << endl;
+		//cout << "<Expression>\t->\t<Term> <Expression>'" << endl;
+		cout << "<Expression>\t->\t<Term> <ExpressionPrime>" << endl;
 	}
 	else if (ruleNum == "4")
 	{
 		//E' -> +TE'
-		cout << "<Expression>\t->\t<Expression> + <Term>" << endl;
+		//cout << "<Expression>\t->\t<Expression> + <Term>" << endl;
+		cout << "<Expression>\t->\t+ <Term> <ExpressionPrime>" << endl;
 	}
 	else if (ruleNum == "5")
 	{
 		//E' -> -TE'
-		cout << "<Expression>\t->\t<Expression> - <Term>'" << endl;
+		//cout << "<Expression>\t->\t<Expression> - <Term>'" << endl;
+		cout << "<Expression>\t->\t- <Term> <ExpressionPrime>" << endl;
 	}
 	else if (ruleNum == "6")
 	{
 		//T -> FT'
-		cout << "<Term>\t\t->\t<Factor> <Term>'" << endl;
+		//cout << "<Term>\t\t->\t<Factor> <Term>'" << endl;
+		cout << "<Term>\t\t->\t<Factor> <TermPrime>" << endl;
 	}
 	else if (ruleNum == "7")
 	{
-		//T' -> *FT
-		cout << "<Term>\t\t->\t<Term> * <Factor>" << endl;
+		//T' -> *FT'
+		//cout << "<Term>\t\t->\t<Term> * <Factor>" << endl;
+		cout << "<Term>\t\t->\t* <Factor> <TermPrime>" << endl;
 	}
 	else if (ruleNum == "8")
 	{
 		//T' -> /FT'
-		cout << "<Term>\t\t->\t<Term> / <Factor>" << endl;
+		//cout << "<Term>\t\t->\t<Term> / <Factor>" << endl;
+		cout << "<Term>\t\t->\t/ <Factor> <TermPrime>" << endl;
 	}
 	else if (ruleNum == "9")
 	{
