@@ -8,8 +8,8 @@
 	September 19, 2019
 */
 
-#include "LexicalAnalyzer.h"
-#include "SyntaxAnalyzer.h"
+#include "lexicalAnalyzer.h"
+#include "syntaxAnalyzer.h"
 
 int main()
 {

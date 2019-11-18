@@ -20,6 +20,9 @@
 #include <stack>
 using namespace std;
 
+//Table driven predictive parser
+int	analyzer(vector<tuple<string, string>> list);
+
 //Used in parsing table
 int	getRow(string check);
 
