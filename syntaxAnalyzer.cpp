@@ -58,7 +58,7 @@ int	analyzer(vector<tuple<string, string>> list)
 
 			if (currentToken == "SELECT")
 			{
-				currentToken = "select";
+				currentToken = "SELECT";
 				currentLexeme = "select";
 			}
 
