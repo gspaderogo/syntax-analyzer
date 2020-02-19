@@ -18,6 +18,61 @@ Token: EOS		Lexeme: $
 
 ---------- END OF STATEMENT ----------
 
+Token: EOS		Lexeme: $
+
+
+---------- END OF STATEMENT ----------
+
+<Statement>	->	<Assignment>
+<Assignment>	->	<id> = <Expression>;
+Token: id		Lexeme: x
+
+Token: OPERATOR		Lexeme: =
+
+<Expression>	->	<Term> <ExpressionPrime>
+<Term>		->	<Factor> <TermPrime>
+<Factor>	->	id
+Token: id		Lexeme: a
+
+<Expression>	->	+ <Term> <ExpressionPrime>
+Token: OPERATOR		Lexeme: +
+
+<Term>		->	<Factor> <TermPrime>
+<Factor>	->	id
+Token: id		Lexeme: b
+
+Token: SEP		Lexeme: ;
+
+Token: EOS		Lexeme: $
+
+
+---------- END OF STATEMENT ----------
+
+<Statement>	->	<Assignment>
+<Assignment>	->	<id> = <Expression>;
+Token: id		Lexeme: z
+
+Token: OPERATOR		Lexeme: =
+
+<Expression>	->	<Term> <ExpressionPrime>
+<Term>		->	<Factor> <TermPrime>
+<Factor>	->	id
+Token: id		Lexeme: c
+
+<Expression>	->	+ <Term> <ExpressionPrime>
+Token: OPERATOR		Lexeme: +
+
+<Term>		->	<Factor> <TermPrime>
+<Factor>	->	id
+Token: id		Lexeme: d
+
+Token: SEP		Lexeme: ;
+
+Token: EOS		Lexeme: $
+
+
+---------- END OF STATEMENT ----------
+
 <Statement>	->	<Assignment>
 <Assignment>	->	<id> = <Expression>;
 Token: id		Lexeme: a
@@ -29,8 +84,8 @@ Token: OPERATOR		Lexeme: =
 <Factor>	->	id
 Token: id		Lexeme: e
 
-<Expression>	->	+ <Term> <ExpressionPrime>
-Token: OPERATOR		Lexeme: +
+<Expression>	->	- <Term> <ExpressionPrime>
+Token: OPERATOR		Lexeme: -
 
 <Term>		->	<Factor> <TermPrime>
 <Factor>	->	id
@@ -52,39 +107,15 @@ Token: OPERATOR		Lexeme: =
 <Expression>	->	<Term> <ExpressionPrime>
 <Term>		->	<Factor> <TermPrime>
 <Factor>	->	id
-Token: id		Lexeme: d
+Token: id		Lexeme: g
 
-<Expression>	->	- <Term> <ExpressionPrime>
-Token: OPERATOR		Lexeme: -
+<Term>		->	* <Factor> <TermPrime>
+Token: OPERATOR		Lexeme: *
 
-<Term>		->	<Factor> <TermPrime>
 <Factor>	->	id
-Token: id		Lexeme: e
+Token: id		Lexeme: n
 
 Token: SEP		Lexeme: ;
-
-Token: EOS		Lexeme: $
-
-
----------- END OF STATEMENT ----------
-
-<Statement>	->	<Select>
-<Select>	->	select( <Expression> )
-Token: select		Lexeme: while
-
-Token: SEP		Lexeme: (
-
-<Expression>	->	<Term> <ExpressionPrime>
-<Term>		->	<Factor> <TermPrime>
-<Factor>	->	id
-Token: id		Lexeme: a
-
-Token: SEP		Lexeme: )
-
-Token: EOS		Lexeme: $
-
-
----------- END OF STATEMENT ----------
 
 Token: EOS		Lexeme: $
 
